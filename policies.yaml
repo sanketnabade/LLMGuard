@@ -1,0 +1,88 @@
+policies:
+  # PII Check
+  - id: 1
+    name: "PII Check"
+    message: "Potentially sensitive information detected."
+    state: true
+    is_user_policy: true
+    is_llm_policy: true
+    action: 0
+    pii_entities:
+      # Common Global
+      - EMAIL_ADDRESS
+      - PHONE_NUMBER
+      - IP_ADDRESS
+      - URL
+      # Financial
+      - CREDIT_CARD
+
+      # USA Specific
+      - US_SSN
+      - US_DRIVER_LICENSE
+      - US_ITIN
+      - US_PASSPORT
+      - US_BANK_NUMBER
+      # Other potentially sensitive
+      - MEDICAL_LICENSE
+    pii_threshold: 0.6 # Confidence threshold
+
+  # Toxicity Check
+  - id: 6
+    name: "Toxicity Check"
+    is_user_policy: true
+    is_llm_policy: true
+    action: 0
+    message: "Inappropriate language detected."
+    state: true
+    threshold: 0.75
+
+  # Competitor Check
+  - id: 3
+    name: "Competitor Check"
+    is_user_policy: false
+    is_llm_policy: true
+    action: 1
+    message: "Competitor name mentioned."
+    state: true
+    threshold: 0.8
+    competitors:
+      - "EvilCorp"
+      - "MegaGlobal Inc"
+
+  # Prompt Leakage Check
+  - id: 2
+    name: "Prompt Leakage Check"
+    is_user_policy: true
+    is_llm_policy: false
+    action: 0 # Override
+    message: "Potential prompt leakage detected."
+    state: true
+    protected_prompts:
+      - "Internal Secret Codeword: Alpha"
+      - "API_KEY_XYZ"
+
+  # Person Check
+  - id: 4
+    name: "Specific Person Mention (NER)"
+    is_user_policy: true
+    is_llm_policy: true
+    action: 1 # Observe
+    message: "Specific person mentioned (via NER)."
+    state: false
+    threshold: 0.85
+    persons:
+      - "John Doe"
+      - "Jane Smith"
+
+  # Location Check
+  - id: 5
+    name: "Specific Location Mention (NER)"
+    is_user_policy: true
+    is_llm_policy: true
+    action: 1
+    message: "Specific location mentioned (via NER)."
+    state: false
+    threshold: 0.9
+    locations:
+      - "Area 51"
+      - "Secret HQ"
